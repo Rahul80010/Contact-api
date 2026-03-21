@@ -8,6 +8,7 @@ module.exports = (req,res,next)=>{
         // console.log(verify)
         if(verify)
         {
+            req.userData = verify;
             next();
         }
     }

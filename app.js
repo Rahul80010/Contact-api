@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRoute = require('./routes/user')
 const contactRoute = require('./routes/contact')
+const messageRoute = require('./routes/message')
 
 
 mongoose.connect('mongodb+srv://rahul1:rahul1@yug.kt56myn.mongodb.net/?appName=YUG')
@@ -14,6 +15,7 @@ app.use(bodyParser.json())
 
 app.use('/user',userRoute)
 app.use('/contact',contactRoute)
+app.use('/message',messageRoute)
 
 
 app.use('*',(req,res)=>{

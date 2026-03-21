@@ -4,6 +4,7 @@ const User = require('../model/user')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const checkAuth = require('../middleware/checkAuth')
 
 //signup api
 router.post('/signup',(req,res)=>{
@@ -147,6 +148,19 @@ router.get('/checkEmail/:email',(req,res)=>{
         })
     })
 })
+
+// get all users except logged in user
+router.get('/all', checkAuth, (req, res) => {
+    const loggedInUserId = req.userData.userId;
+    User.find({ _id: { $ne: loggedInUserId } }).select("-password")
+    .then(result => {
+        res.status(200).json(result);
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({ error: err });
+    });
+});
 
 module.exports = router;
 
