@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const userRoute = require('./routes/user')
 const contactRoute = require('./routes/contact')
 const messageRoute = require('./routes/message')
+require('./firebase');
 
 
 mongoose.connect('mongodb+srv://rahul1:rahul1@yug.kt56myn.mongodb.net/?appName=YUG')

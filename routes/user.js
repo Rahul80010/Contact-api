@@ -162,5 +162,23 @@ router.get('/all', checkAuth, (req, res) => {
     });
 });
 
+// Update FCM token
+router.put('/update-fcm', checkAuth, (req, res) => {
+    const userId = req.userData.userId;
+    const { fcmToken } = req.body;
+
+    User.findByIdAndUpdate(userId, { fcmToken: fcmToken }, { new: true }).select("-password")
+        .then(updatedUser => {
+            res.status(200).json({
+                msg: "FCM token updated successfully",
+                user: updatedUser
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ error: err });
+        });
+});
+
 module.exports = router;
 

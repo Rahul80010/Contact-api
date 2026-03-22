@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Message = require('../model/message');
+const User = require('../model/user');
+const admin = require('../firebase');
 const checkAuth = require('../middleware/checkAuth');
 const { getReceiverSocketId, getIo } = require('../socket');
 
@@ -25,6 +27,27 @@ router.post('/send/:id', checkAuth, async (req, res) => {
         const receiverSocketId = getReceiverSocketId(receiverId);
         if (receiverSocketId) {
             getIo().to(receiverSocketId).emit("newMessage", newMessage);
+        }
+
+        // Send Push Notification
+        const receiver = await User.findById(receiverId);
+        const sender = await User.findById(senderId);
+
+        if (receiver && receiver.fcmToken) {
+            try {
+                const payload = {
+                    notification: {
+                        title: `New message from ${sender.firstName} ${sender.lastName}`,
+                        body: message
+                    },
+                    token: receiver.fcmToken
+                };
+                
+                await admin.messaging().send(payload);
+                console.log('Successfully sent FCM push notification');
+            } catch (fcmError) {
+                console.error('Error sending FCM push notification:', fcmError.message);
+            }
         }
 
         res.status(201).json(newMessage);
